@@ -7,7 +7,7 @@ omniFocus = SBApplication.applicationWithURL_(
 )
 
 
-def tasksInView():
+def itemsInView():
     """Iterate over all of the items in view on one of the open windows.
 
     XXX: Which window?
@@ -37,7 +37,7 @@ def qualifiedName(task):
 
 def main():
     total = 0
-    for task in tasksInView():
+    for task in itemsInView():
         estimated = task.estimatedMinutes().get()
         if estimated is not None:
             total += estimated
