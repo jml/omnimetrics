@@ -54,14 +54,45 @@ def isTask(item):
     return item.isKindOfClass_(taskClass)
 
 
-def main():
+def reportEstimates(items):
+    """Given a list of items, show how much time we expect to spend doing them.
+
+    Assumes items have names. Report has a list of all items with estimates,
+    along with a total, and all items without estimates.
+    """
     total = 0
-    for task in filter(isTask, itemsInView()):
-        estimated = task.estimatedMinutes().get()
-        if estimated is not None:
+    unestimatedItems = []
+    for item in items:
+        name = qualifiedName(item)
+        estimated = item.estimatedMinutes().get()
+        if estimated is None:
+            unestimatedItems.append(name)
+        else:
             total += estimated
-            print(qualifiedName(task), estimated)
-    print("Total Estimated Minutes:", total)
+            print(name, formatMinutes(estimated))
+    print('-' * 40)
+    print('Total estimated:', formatMinutes(total))
+    print()
+    for name in unestimatedItems:
+        print(name)
+    print('-' * 40)
+    print('Items without estimates:', len(unestimatedItems))
+
+
+def formatMinutes(m):
+    """Format a number of minutes for human reading.
+
+    More or less follows Go-style convention of XhYm.
+    """
+    hours, minutes = divmod(m, 60)
+    if hours:
+        return '%sh%sm' % (hours, minutes)
+    return '%sm' % (m,)
+
+
+def main():
+    activeTasks = (i for i in itemsInView() if isTask(i) and not i.blocked())
+    reportEstimates(activeTasks)
 
 
 if __name__ == '__main__':
