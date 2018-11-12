@@ -6,9 +6,12 @@ omniFocus = SBApplication.applicationWithURL_(
     NSURL.URLWithString_("file:///Applications/OmniFocus.app")
 )
 
+
 def tasksInView():
-    for element in omniFocus.documents()[0].documentWindows()[0].content().leaves():
+    content = omniFocus.documents()[0].documentWindows()[0].content()
+    for element in content.leaves():
         yield element.value()
+
 
 def qualifiedName(aTask):
     def allParents():
@@ -22,6 +25,7 @@ def qualifiedName(aTask):
                     return
     return " / ".join(reversed(list(allParents())))
 
+
 def main():
     total = 0
     for task in tasksInView():
@@ -30,6 +34,7 @@ def main():
             total += estimated
             print(qualifiedName(task), estimated)
     print("Total Estimated Minutes:", total)
+
 
 if __name__ == '__main__':
     main()
