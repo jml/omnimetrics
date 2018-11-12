@@ -31,9 +31,22 @@ def iterParents(task):
         eachTask = eachTask.parentTask().get()
 
 
-def qualifiedName(task):
-    """Return the full name of a task, including any projects that it's in."""
-    return " / ".join(reversed([t.name() for t in iterParents(task)]))
+def qualifiedName(item):
+    """Return the full name of an item, including any projects that it's in.
+
+    If the item does not have a name, return ``None``.
+
+    XXX: Doesn't include folders.
+    """
+    names = []
+    # Note: assumes that the presence of a single null name in the parent tree
+    # means that the item is not properly named.
+    for i in iterParents(item):
+        name = i.name()
+        if name is None:
+            return None
+        names.append(name)
+    return " / ".join(reversed(names))
 
 
 def isTask(item):
