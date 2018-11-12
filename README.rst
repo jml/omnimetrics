@@ -7,8 +7,8 @@ omnimetrics
 
 The goal is to gather metrics from OmniFocus so I can get a sense of
 
- - how heavy my workload is
- - whether I am making progress
+- how heavy my workload is
+- whether I am making progress
 
 But in reality this is a bunch of scripts to do stuff with OmniFocus.
 
