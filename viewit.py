@@ -5,6 +5,7 @@ from Foundation import NSURL
 omniFocus = SBApplication.applicationWithURL_(
     NSURL.URLWithString_("file:///Applications/OmniFocus.app")
 )
+taskClass = omniFocus.classForScriptingClass_('task')
 
 
 def itemsInView():
@@ -35,9 +36,14 @@ def qualifiedName(task):
     return " / ".join(reversed([t.name() for t in iterParents(task)]))
 
 
+def isTask(item):
+    """Is the given item an OmniFocus task?"""
+    return item.isKindOfClass_(taskClass)
+
+
 def main():
     total = 0
-    for task in itemsInView():
+    for task in filter(isTask, itemsInView()):
         estimated = task.estimatedMinutes().get()
         if estimated is not None:
             total += estimated
