@@ -49,4 +49,10 @@ This tool queries OmniFocus to get a set of all the available tasks to you right
 
 You can then choose to do it. If so, the procrastinatron starts a timer. When you are done, the timer stops, and the task is removed from your todo list.
 
-Or, you can choose *not* to do it. When you do this, you must say why you don't want to do it.
+You can pause the timer, of course, and Procrastinatron will ask for a reason, to subtly encourage you to stay on target. You can also abandon the attempt to work on item, and again Procrastinatron will want to know why. All of these things are logged.
+
+Or, you can choose *not* to do it. When you do this, you must say why you don't want to do it. Procrastinatron keeps a log of this. Each time you are presented with that item again, you also get to see your past excuses. Once there are a sufficient number of excuses (say 3), Procrastinatron suggests that maybe you should just abandon the task.
+
+Procrastinatron only ever shows available tasks. If a task becomes available during a Procrastinatron session, it jumps to the front of the queue. This is intended to facilicate flow through connected tasks.
+
+Once you've done or deferred every available task, Procrastinatron will ask if you want to do another loop round, to tackle the ones you deferred.
