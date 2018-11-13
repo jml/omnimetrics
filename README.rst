@@ -2,6 +2,9 @@
 omnimetrics
 ===========
 
+.. image:: https://travis-ci.org/jml/omnimetrics.svg?branch=master
+    :target: https://travis-ci.org/jml/omnimetrics
+
 The goal is to gather metrics from OmniFocus so I can get a sense of
 
  - how heavy my workload is
