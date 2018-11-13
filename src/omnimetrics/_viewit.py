@@ -1,11 +1,11 @@
 # From https://gist.github.com/glyph/24913ce5c9dac71b7a9c331f2a9d67fc
-from ScriptingBridge import SBApplication
 from Foundation import NSURL
+from ScriptingBridge import SBApplication
 
 omniFocus = SBApplication.applicationWithURL_(
     NSURL.URLWithString_("file:///Applications/OmniFocus.app")
 )
-taskClass = omniFocus.classForScriptingClass_('task')
+taskClass = omniFocus.classForScriptingClass_("task")
 
 
 def itemsInView():
@@ -70,13 +70,13 @@ def reportEstimates(items):
         else:
             total += estimated
             print(name, formatMinutes(estimated))
-    print('-' * 40)
-    print('Total estimated:', formatMinutes(total))
+    print("-" * 40)
+    print("Total estimated:", formatMinutes(total))
     print()
     for name in unestimatedItems:
         print(name)
-    print('-' * 40)
-    print('Items without estimates:', len(unestimatedItems))
+    print("-" * 40)
+    print("Items without estimates:", len(unestimatedItems))
 
 
 def formatMinutes(m):
@@ -86,8 +86,8 @@ def formatMinutes(m):
     """
     hours, minutes = divmod(m, 60)
     if hours:
-        return '%sh%sm' % (hours, minutes)
-    return '%sm' % (m,)
+        return "%sh%sm" % (hours, minutes)
+    return "%sm" % (m,)
 
 
 def main():
@@ -95,5 +95,5 @@ def main():
     reportEstimates(activeTasks)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

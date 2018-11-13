@@ -1,1 +1,6 @@
 __pycache__
+*.swp
+*.egg-info
+.coverage
+.pytest_cache
+dist

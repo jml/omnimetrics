@@ -3,16 +3,16 @@
 Command-line tool that shows exactly one OmniFocus task to do.
 """
 
-from ScriptingBridge import SBApplication
 from Foundation import NSURL
+from ScriptingBridge import SBApplication
 
 omniFocus = SBApplication.applicationWithURL_(
     NSURL.URLWithString_("file:///Applications/OmniFocus.app")
 )
-taskClass = omniFocus.classForScriptingClass_('task')
+taskClass = omniFocus.classForScriptingClass_("task")
 
 
-def itemsInView():
+def itemsInView():  # pragma: no cover
     """Iterate over all of the items in view on one of the open windows.
 
     Items can be tasks, calendar items, or project markers. Only 'tasks' has a
@@ -26,27 +26,27 @@ def itemsInView():
         yield element.value()
 
 
-def isTask(item):
+def isTask(item):  # pragma: no cover
     """Is the given item an OmniFocus task?"""
     return item.isKindOfClass_(taskClass)
 
 
-def tasksInView():
+def tasksInView():  # pragma: no cover
     """Iterate over all the tasks in view."""
     return filter(isTask, itemsInView())
 
 
-def attempt(task):
+def attempt(task):  # pragma: no cover
     """Offer the user a single task to perform."""
     print(showTask(task))
     wantToAttempt = None
     while wantToAttempt is None:
-        wantToAttempt = parseYesNo(input('Do this now? (y/n) '))
+        wantToAttempt = parseYesNo(input("Do this now? (y/n) "))
     if not wantToAttempt:
         # TODO: Do something with `reason`.
         reason = None
         while not reason:
-            reason = input('Why not? ').strip()
+            reason = input("Why not? ").strip()
         # `False` is code for not done. Really want an enum type
         # instead.
         return False
@@ -54,7 +54,7 @@ def attempt(task):
     return True
 
 
-def qualifiedName(task):
+def qualifiedName(task):  # pragma: no cover
     """Return the full name of a task, including any projects that it's in.
 
     XXX: Doesn't include folders.
@@ -62,7 +62,7 @@ def qualifiedName(task):
     return " / ".join(reversed([t.name() for t in iterParents(task)]))
 
 
-def iterParents(task):
+def iterParents(task):  # pragma: no cover
     """Get all the parents of a task, including the task itself."""
     eachTask = task
     while eachTask is not None:
@@ -72,9 +72,9 @@ def iterParents(task):
         eachTask = eachTask.parentTask().get()
 
 
-def showTask(task):
+def showTask(task):  # pragma: no cover
     """Show a task to the end-user."""
-    return(qualifiedName(task))
+    return qualifiedName(task)
 
 
 def parseYesNo(response):
@@ -86,16 +86,8 @@ def parseYesNo(response):
     if not response:
         return None
     first = response[0].lower()
-    if first == 'y':
+    if first == "y":
         return True
-    if first == 'n':
+    if first == "n":  # pragma: no cover
         return False
-    return None
-
-
-def main():
-    print(attempt(next(tasksInView())))
-
-
-if __name__ == '__main__':
-    main()
+    return None  # pragma: no cover
