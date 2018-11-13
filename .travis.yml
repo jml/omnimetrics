@@ -1,0 +1,27 @@
+language: python
+
+sudo: false
+
+env:
+    - PIPENV_IGNORE_VIRTUALENVS=1
+
+cache:
+    directories:
+        - $HOME/.cache/pip
+
+python:
+  - "3.6"
+
+install:
+  - pip install --upgrade pip setuptools pipenv
+  - pipenv install --dev --pre
+
+script:
+  - pipenv run ./scripts/run-build.sh
+
+notifications:
+  email:
+    recipients:
+      - jml@mumak.net
+    on_success: never
+    on_failure: never
