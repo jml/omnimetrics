@@ -35,7 +35,7 @@ setuptools.setup(
     install_requires=["pyobjc"],
     python_requires=">=3.6",
     classifiers=[
-        "Operating System :: MacOS :: MacOS X"
+        "Operating System :: MacOS :: MacOS X",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
