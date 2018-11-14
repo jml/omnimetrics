@@ -36,17 +36,40 @@ def tasksInView():  # pragma: no cover
     return filter(isTask, itemsInView())
 
 
+class Procrastinatron:
+    def __init__(self, tasks):
+        # XXX: this is wrong. Rather than a fixed iterator of tasks, we want
+        # to refetch the task list from OmniFocus, ignoring the ones that have
+        # been discarded, as our actions may reveal more tasks. However, at
+        # this stage, we just want to test out the workflow.
+        self._tasks = iter(tasks)
+        self._currentTask = None
+        self._deferred = set()
+
+    def next(self):
+        if not self._currentTask:
+            self._currentTask = next(self._tasks)
+        return self._currentTask
+
+    def defer(self, reason):
+        self._deferred.add(self._currentTask.id())
+        self._currentTask = None
+
+    def completed(self):
+        self._currentTask.complete()
+        self._currentTask = None
+
+    def interrupted(self):
+        self._currentTask = None
+
+
 def attempt(task):  # pragma: no cover
     """Offer the user a single task to perform."""
-    print(showTask(task))
-    wantToAttempt = None
-    while wantToAttempt is None:
-        wantToAttempt = parseYesNo(input("Do this now? (y/n) "))
+    ui = UI()
+    wantToAttempt = ui.offerTask(task)
     if not wantToAttempt:
         # TODO: Do something with `reason`.
-        reason = None
-        while not reason:
-            reason = input("Why not? ").strip()
+        reason = ui.requestReasonForDeferral(task)
         # `False` is code for not done. Really want an enum type
         # instead.
         return False
@@ -75,6 +98,21 @@ def iterParents(task):  # pragma: no cover
 def showTask(task):  # pragma: no cover
     """Show a task to the end-user."""
     return qualifiedName(task)
+
+
+class UI:
+    def offerTask(self, task):
+        print(showTask(task))
+        wantToAttempt = None
+        while wantToAttempt is None:
+            wantToAttempt = parseYesNo(input("Do this now? (y/n) "))
+        return wantToAttempt
+
+    def requestReasonForDeferral(self, task):
+        reason = None
+        while not reason:
+            reason = input("Why not? ").strip()
+        return reason
 
 
 def parseYesNo(response):
