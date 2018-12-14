@@ -3,6 +3,9 @@
 Command-line tool that shows exactly one OmniFocus task to do.
 """
 
+import attr
+import time
+
 from Foundation import NSURL
 from ScriptingBridge import SBApplication
 
@@ -36,45 +39,71 @@ def tasksInView():  # pragma: no cover
     return filter(isTask, itemsInView())
 
 
-class Procrastinatron:
-    def __init__(self, tasks):
-        # XXX: this is wrong. Rather than a fixed iterator of tasks, we want
-        # to refetch the task list from OmniFocus, ignoring the ones that have
-        # been discarded, as our actions may reveal more tasks. However, at
-        # this stage, we just want to test out the workflow.
-        self._tasks = iter(tasks)
-        self._currentTask = None
-        self._deferred = set()
+@attr.s(frozen=True)
+class Task:
+    """A task from OmniFocus."""
 
-    def next(self):
-        if not self._currentTask:
-            self._currentTask = next(self._tasks)
-        return self._currentTask
+    task = attr.ib()
 
     def defer(self, reason):
-        self._deferred.add(self._currentTask.id())
-        self._currentTask = None
+        return DeferredTask(self.task, reason)
 
-    def completed(self):
-        self._currentTask.complete()
-        self._currentTask = None
+    def start(self, startTime):
+        return StartedTask(self.task, startTime)
 
-    def interrupted(self):
-        self._currentTask = None
+
+@attr.s(frozen=True)
+class StartedTask:
+    """A task that has been started."""
+
+    task = attr.ib()
+    startTime = attr.ib()
+
+    def complete(self, endTime):
+        return CompletedTask(self.task, self.startTime, endTime)
+
+    def abandon(self):
+        """We don't want to work on this task any more."""
+        return Task(self.task)
+
+
+@attr.s(frozen=True)
+class CompletedTask:
+    """A task that has been completed."""
+
+    task = attr.ib()
+    startTime = attr.ib()
+    endTime = attr.ib()
+
+
+@attr.s(frozen=True)
+class DeferredTask:
+    """A task that we've decided not to do."""
+
+    task = attr.ib()
+    reason = attr.ib()
 
 
 def attempt(task):  # pragma: no cover
     """Offer the user a single task to perform."""
     ui = UI()
+    clock = time
+
+    t = Task(task)
     wantToAttempt = ui.offerTask(task)
     if not wantToAttempt:
         # TODO: Do something with `reason`.
         reason = ui.requestReasonForDeferral(task)
-        # `False` is code for not done. Really want an enum type
-        # instead.
-        return False
+        return t.defer(reason)
     # TODO: timer & completion logic
-    return True
+    started = t.start(clock.now())
+    result = ui.waitUntilDone(task)
+    if result == 'done':
+        return started.complete(clock.now())
+    elif result == 'abandoned':
+        return started.abandon()
+    else:
+        raise ValueError('Unexpected response from UI (%r): %r' % (ui, result))
 
 
 def qualifiedName(task):  # pragma: no cover
