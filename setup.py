@@ -32,7 +32,7 @@ setuptools.setup(
     license="Apache",
     description="Tools for exploring OmniFocus 3 data",
     zip_safe=False,
-    install_requires=["attr", "pyobjc"],
+    install_requires=["appscript", "attr", "pyobjc"],
     python_requires=">=3.8",
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
