@@ -4,14 +4,21 @@ Author: Glyph Lefkowitz
 Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 """
 
-from omnimetrics._database import OMNIFOCUS, load_tasks
+import json
+from typing import IO
 
 import attr
+import click
+
+from omnimetrics._database import OMNIFOCUS, load_tasks
 
 
-def main():
+@click.command()
+@click.argument("output", type=click.File("w"))
+def main(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
-        print(attr.asdict(task))
+        output.write(json.dumps(attr.asdict(task)))
+        output.write("\n")
 
 
 """
