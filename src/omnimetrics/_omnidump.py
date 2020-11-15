@@ -42,6 +42,9 @@ Here's what we need to do.
   - Avro? https://avro.apache.org/docs/1.10.0/gettingstartedpython.html
 
 - Figure out how to use launchd to run a script daily
+  - https://www.launchd.info/
+  - Put a plist file in ~/Library/LaunchAgents
+
 - Create a Terraform module that:
   - creates a GCP project
   - creates a GCS bucket
