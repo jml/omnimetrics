@@ -7,7 +7,7 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 from datetime import datetime
 from json import dumps
 
-from appscript import app, k, reference
+from aeosa.appscript import app, k, reference
 
 omniFocus = app("OmniFocus")
 
@@ -34,13 +34,14 @@ def fixkeys(d):
         return d
 
 
-first = True
-print("[")
-for task in omniFocus.default_document.flattened_tasks():
-    if first:
-        first = False
-    else:
-        print(",")
-    value = fixkeys(task.properties())
-    print(dumps(value, default=jsonify,))
-print("]")
+def main():
+    first = True
+    print("[")
+    for task in omniFocus.default_document.flattened_tasks():
+        if first:
+            first = False
+        else:
+            print(",")
+        value = fixkeys(task.properties())
+        print(dumps(value, default=jsonify,))
+    print("]")
