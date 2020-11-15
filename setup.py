@@ -33,7 +33,7 @@ setuptools.setup(
     description="Tools for exploring OmniFocus 3 data",
     zip_safe=False,
     install_requires=["attr", "pyobjc"],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
         "Programming Language :: Python :: 3.6",
