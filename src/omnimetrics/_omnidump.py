@@ -5,6 +5,7 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 """
 
 import json
+from datetime import datetime
 from typing import IO
 
 import attr
@@ -17,8 +18,20 @@ from omnimetrics._database import OMNIFOCUS, load_tasks
 @click.argument("output", type=click.File("w"))
 def main(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
-        output.write(json.dumps(attr.asdict(task)))
+        task_dict = attr.asdict(task)
+        try:
+            output.write(json.dumps(task_dict, default=jsonify))
+        except ValueError:
+            import pdb; pdb.set_trace()
+            raise
         output.write("\n")
+
+
+
+def jsonify(o):
+    if isinstance(o, datetime):
+        return o.isoformat()
+    return o
 
 
 """
