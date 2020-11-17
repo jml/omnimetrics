@@ -9,11 +9,11 @@ Source:
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime
 from pprint import pprint
 from typing import Any, Callable, Iterable, Optional, TypeVar
 
-import attr
 from Foundation import NSURL
 from ScriptingBridge import SBApplication
 
@@ -48,7 +48,7 @@ def parse_bool(value: int) -> bool:
     raise ValueError(f"Not a bool: {value}")
 
 
-@attr.frozen
+@dataclass(frozen=True)
 class Tag:
     name: str
 
@@ -57,7 +57,7 @@ class Tag:
         return cls(name=tag_reference.name())
 
 
-@attr.frozen
+@dataclass(frozen=True)
 class Project:
     name: str
 
@@ -66,7 +66,7 @@ class Project:
         return cls(name=project_reference.name())
 
 
-@attr.frozen
+@dataclass(frozen=True)
 class Task:
     id: str
     name: str
@@ -150,7 +150,7 @@ class Task:
             raise
 
 
-@attr.frozen
+@dataclass(frozen=True)
 class TaskReference:
     id: str
     name: str

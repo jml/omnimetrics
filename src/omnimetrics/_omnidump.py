@@ -5,10 +5,10 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 """
 
 import json
+from dataclasses import asdict
 from datetime import datetime
 from typing import IO
 
-import attr
 import click
 
 from omnimetrics._database import OMNIFOCUS, load_tasks
@@ -18,7 +18,7 @@ from omnimetrics._database import OMNIFOCUS, load_tasks
 @click.argument("output", type=click.File("w"))
 def main(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
-        task_dict = attr.asdict(task)
+        task_dict = asdict(task)
         try:
             output.write(json.dumps(task_dict, default=jsonify))
         except ValueError:
