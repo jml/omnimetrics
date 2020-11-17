@@ -49,20 +49,20 @@ def parse_bool(value: int) -> bool:
 
 
 @dataclass(frozen=True)
-class Tag:
+class TagReference:
     name: str
 
     @classmethod
-    def from_reference(cls, tag_reference) -> Tag:
+    def from_reference(cls, tag_reference) -> TagReference:
         return cls(name=tag_reference.name())
 
 
 @dataclass(frozen=True)
-class Project:
+class ProjectReference:
     name: str
 
     @classmethod
-    def from_reference(cls, project_reference) -> Project:
+    def from_reference(cls, project_reference) -> ProjectReference:
         return cls(name=project_reference.name())
 
 
@@ -82,10 +82,10 @@ class Task:
     dropped_date: Optional[datetime]
     completion_date: Optional[datetime]
 
-    primary_tag: Optional[Tag]
+    primary_tag: Optional[TagReference]
     parent_task: Optional[TaskReference]
     estimated_minutes: Optional[int]
-    containing_project: Optional[Project]
+    containing_project: Optional[ProjectReference]
 
     is_next: bool
     num_available_tasks: int
@@ -124,10 +124,10 @@ class Task:
                 dropped_date=optional(parse_date, properties["droppedDate"]),
                 completion_date=optional(parse_date, properties["completionDate"]),
 
-                primary_tag=optional(Tag.from_reference, properties["primaryTag"]),
+                primary_tag=optional(TagReference.from_reference, properties["primaryTag"]),
                 parent_task=optional(TaskReference.from_reference, properties["parentTask"]),
                 estimated_minutes=properties["estimatedMinutes"],
-                containing_project=optional(Project.from_reference, properties["containingProject"]),
+                containing_project=optional(ProjectReference.from_reference, properties["containingProject"]),
 
                 is_next=parse_bool(properties["next"]),
                 num_available_tasks=properties["numberOfAvailableTasks"],
