@@ -43,7 +43,7 @@ setuptools.setup(
         "console_scripts": [
             "viewit=omnimetrics._viewit:main",
             "procrastinatron=omnimetrics.__main__:procrastinatron",
-            "omnimetrics=omnimetrics._omnidump:omnimetrics",
+            "omnimetrics=omnimetrics._script:omnimetrics",
         ]
     },
     long_description=open(README).read(),
