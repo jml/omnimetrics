@@ -7,6 +7,7 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 import json
 from dataclasses import asdict
 from datetime import datetime
+from pathlib import Path
 from typing import IO
 
 import click
@@ -21,7 +22,22 @@ def omnimetrics():
 
 @omnimetrics.command()
 @click.argument("output", type=click.File("w"))
-def dump(output: IO[str]) -> None:
+def dump_file(output: IO[str]) -> None:
+    _dump_omnifocus(output)
+
+
+@omnimetrics.command()
+@click.option("--filename", default="omnifocus-%Y%m%d-%H%M%S.json", type=str)
+@click.argument("directory", type=click.Path(file_okay=False, dir_okay=True, exists=True))
+def dump(filename: str, directory: str) -> None:
+    now = datetime.now()
+    filename = now.strftime(filename)
+    path = Path(directory).joinpath(filename)
+    with path.open("w") as output:
+        _dump_omnifocus(output)
+
+
+def _dump_omnifocus(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
         task_dict = asdict(task)
         output.write(json.dumps(task_dict, default=jsonify))
