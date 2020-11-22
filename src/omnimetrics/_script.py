@@ -24,13 +24,8 @@ def omnimetrics():
 def dump(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
         task_dict = asdict(task)
-        try:
-            output.write(json.dumps(task_dict, default=jsonify))
-        except ValueError:
-            import pdb; pdb.set_trace()
-            raise
+        output.write(json.dumps(task_dict, default=jsonify))
         output.write("\n")
-
 
 
 def jsonify(o):
