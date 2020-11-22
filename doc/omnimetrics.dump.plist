@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>io.jml.omnimetrics.omnidump</string>
+		<key>Program</key>
+		<string>/bin/zsh</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>/bin/zsh</string>
+          <string>-c</string>
+          <string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnidump /Users/jml/Desktop/omnifocus-$(date +%Y%m%d-%H%M%S).json</string>
+        </array>
+        <key>StartCalendarInterval</key>
+        <dict>
+	      <key>Hour</key>
+	      <integer>3</integer>
+	      <key>Minute</key>
+	      <integer>0</integer>
+        </dict>
+	</dict>
+</plist>

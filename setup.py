@@ -32,8 +32,8 @@ setuptools.setup(
     license="Apache",
     description="Tools for exploring OmniFocus 3 data",
     zip_safe=False,
-    install_requires=["attr", "pyobjc"],
-    python_requires=">=3.6",
+    install_requires=["appscript", "attrs", "click", "pyobjc"],
+    python_requires=">=3.8",
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
         "Programming Language :: Python :: 3.6",
@@ -43,6 +43,7 @@ setuptools.setup(
         "console_scripts": [
             "viewit=omnimetrics._viewit:main",
             "procrastinatron=omnimetrics.__main__:procrastinatron",
+            "omnidump=omnimetrics._omnidump:main",
         ]
     },
     long_description=open(README).read(),
