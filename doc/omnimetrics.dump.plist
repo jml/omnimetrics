@@ -10,7 +10,7 @@
         <array>
           <string>/bin/zsh</string>
           <string>-c</string>
-          <string>/Users/jml/.pyenv/shims/omnidump omnifocus-$(date +%Y%m%d-%H%M%S).json</string>
+          <string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnidump /Users/jml/Desktop/omnifocus-$(date +%Y%m%d-%H%M%S).json</string>
         </array>
         <key>StartCalendarInterval</key>
         <dict>
