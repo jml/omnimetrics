@@ -14,9 +14,14 @@ import click
 from omnimetrics._database import OMNIFOCUS, load_tasks
 
 
-@click.command()
+@click.group()
+def omnimetrics():
+    """Top-level omnimetrics command."""
+
+
+@omnimetrics.command()
 @click.argument("output", type=click.File("w"))
-def main(output: IO[str]) -> None:
+def dump(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
         task_dict = asdict(task)
         try:
