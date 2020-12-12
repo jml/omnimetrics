@@ -5,12 +5,12 @@
 		<key>Label</key>
 		<string>io.jml.omnimetrics.omnidump</string>
 		<key>Program</key>
-		<string>/bin/zsh</string>
+		<string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnimetrics</string>
         <key>ProgramArguments</key>
         <array>
-          <string>/bin/zsh</string>
-          <string>-c</string>
-          <string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnidump /Users/jml/Desktop/omnifocus-$(date +%Y%m%d-%H%M%S).json</string>
+          <string>omnimetrics</string>
+          <string>dump</string>
+          <string>/Users/jml/Library/Omnimetrics/Exports/</string>
         </array>
         <key>StartCalendarInterval</key>
         <dict>

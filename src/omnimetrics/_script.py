@@ -7,25 +7,69 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 import json
 from dataclasses import asdict
 from datetime import datetime
+from pathlib import Path
 from typing import IO
 
 import click
+from google.cloud import storage
 
 from omnimetrics._database import OMNIFOCUS, load_tasks
+from omnimetrics._gcs import iter_uploads
 
 
-@click.command()
+@click.group()
+def omnimetrics():
+    """Top-level omnimetrics command."""
+
+
+@omnimetrics.command()
 @click.argument("output", type=click.File("w"))
-def main(output: IO[str]) -> None:
+def dump_file(output: IO[str]) -> None:
+    _dump_omnifocus(output)
+
+
+@omnimetrics.command()
+@click.option("--filename", default="omnifocus-%Y%m%d-%H%M%S.json", type=str)
+@click.argument("directory", type=click.Path(file_okay=False, dir_okay=True, exists=True))
+def dump(filename: str, directory: str) -> None:
+    now = datetime.now()
+    filename = now.strftime(filename)
+    path = Path(directory).joinpath(filename)
+    with path.open("w") as output:
+        _dump_omnifocus(output)
+
+
+def _dump_omnifocus(output: IO[str]) -> None:
     for task in load_tasks(OMNIFOCUS.defaultDocument()):
         task_dict = asdict(task)
-        try:
-            output.write(json.dumps(task_dict, default=jsonify))
-        except ValueError:
-            import pdb; pdb.set_trace()
-            raise
+        output.write(json.dumps(task_dict, default=jsonify))
         output.write("\n")
 
+
+@omnimetrics.command()
+@click.option("--remove-after-upload/--no-remove-after-upload", default=False)
+@click.option("--dry-run/--no-dry-run", default=False)
+@click.option("--prefix", type=str, default="")
+@click.argument("local-directory", type=click.Path(file_okay=False, dir_okay=True, exists=True))
+@click.argument("gcs-bucket", type=str)
+def upload(remove_after_upload: bool, prefix: str, local_directory: str, gcs_bucket: str, dry_run: bool):
+    local_dir = Path(local_directory)
+    uploads = iter_uploads(local_dir, Path(prefix))
+
+    if dry_run:
+        for upload in uploads:
+            print(upload)
+            if remove_after_upload:
+                print(f"rm -f {upload.local_file}")
+
+    else:
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(gcs_bucket)
+
+        for upload in uploads:
+            upload.upload(bucket)
+            if remove_after_upload:
+                upload.local_file.unlink()
 
 
 def jsonify(o):
