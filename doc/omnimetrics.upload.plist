@@ -3,21 +3,21 @@
 <plist version="1.0">
 	<dict>
 		<key>Label</key>
-		<string>io.jml.omnimetrics.omnidump</string>
+		<string>io.jml.omnimetrics.upload</string>
 		<key>Program</key>
 		<string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnimetrics</string>
         <key>ProgramArguments</key>
         <array>
           <string>omnimetrics</string>
-          <string>dump</string>
+          <string>upload</string>
+          <string>--remove-after-upload</string>
+          <string>--prefix=uploads</string>
+          <string>/Users/jml/Library/Omnimetrics/Exports/</string>
+          <string>jml-omnimetrics</string>
+        </array>
+        <key>QueueDirectories</key>
+        <array>
           <string>/Users/jml/Library/Omnimetrics/Exports/</string>
         </array>
-        <key>StartCalendarInterval</key>
-        <dict>
-	      <key>Hour</key>
-	      <integer>3</integer>
-	      <key>Minute</key>
-	      <integer>0</integer>
-        </dict>
 	</dict>
 </plist>
