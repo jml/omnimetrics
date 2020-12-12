@@ -8,9 +8,9 @@
 		<string>/bin/zsh</string>
         <key>ProgramArguments</key>
         <array>
-          <string>/bin/zsh</string>
-          <string>-c</string>
-          <string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnimetrics dump /Users/jml/Desktop/</string>
+          <string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnimetrics</string>
+          <string>dump</string>
+          <string>/Users/jml/Desktop/</string>
         </array>
         <key>StartCalendarInterval</key>
         <dict>
