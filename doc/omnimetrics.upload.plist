@@ -6,6 +6,11 @@
 		<string>io.jml.omnimetrics.upload</string>
 		<key>Program</key>
 		<string>/Users/jml/.pyenv/versions/omnimetrics/bin/omnimetrics</string>
+        <key>EnvironmentVariables</key>
+        <dict>
+          <key>GOOGLE_APPLICATION_CREDENTIALS</key>
+          <string>/path/to/service-account-key.json</string>
+        </dict>
         <key>ProgramArguments</key>
         <array>
           <string>omnimetrics</string>
