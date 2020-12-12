@@ -11,8 +11,10 @@ from pathlib import Path
 from typing import IO
 
 import click
+from google.cloud import storage
 
 from omnimetrics._database import OMNIFOCUS, load_tasks
+from omnimetrics._gcs import iter_uploads
 
 
 @click.group()
@@ -42,6 +44,32 @@ def _dump_omnifocus(output: IO[str]) -> None:
         task_dict = asdict(task)
         output.write(json.dumps(task_dict, default=jsonify))
         output.write("\n")
+
+
+@omnimetrics.command()
+@click.option("--remove-after-upload/--no-remove-after-upload", default=False)
+@click.option("--dry-run/--no-dry-run", default=False)
+@click.option("--prefix", type=str, default="")
+@click.argument("local-directory", type=click.Path(file_okay=False, dir_okay=True, exists=True))
+@click.argument("gcs-bucket", type=str)
+def upload(remove_after_upload: bool, prefix: str, local_directory: str, gcs_bucket: str, dry_run: bool):
+    local_dir = Path(local_directory)
+    uploads = iter_uploads(local_dir, Path(prefix))
+
+    if dry_run:
+        for upload in uploads:
+            print(upload)
+            if remove_after_upload:
+                print(f"rm -f {upload.local_file}")
+
+    else:
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(gcs_bucket)
+
+        for upload in uploads:
+            upload.upload(bucket)
+            if remove_after_upload:
+                upload.local_file.unlink()
 
 
 def jsonify(o):

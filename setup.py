@@ -32,7 +32,7 @@ setuptools.setup(
     license="Apache",
     description="Tools for exploring OmniFocus 3 data",
     zip_safe=False,
-    install_requires=["appscript", "attrs", "click", "pyobjc"],
+    install_requires=["appscript", "attrs", "click", "google-cloud-storage", "pyobjc"],
     python_requires=">=3.8",
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
