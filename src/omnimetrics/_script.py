@@ -5,6 +5,7 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 """
 
 import json
+import tempfile
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
@@ -70,6 +71,24 @@ def upload(remove_after_upload: bool, prefix: str, local_directory: str, gcs_buc
             upload.upload(bucket)
             if remove_after_upload:
                 upload.local_file.unlink()
+
+
+@omnimetrics.command()
+@click.option("--gcs-bucket-prefix", type=str, default="")
+@click.option("--filename", default="omnifocus-%Y%m%d-%H%M%S.json", type=str)
+@click.argument("gcs-bucket", type=str)
+def run_pipeline(gcs_bucket_prefix: str, filename: str, gcs_bucket: str) -> None:
+    """Extract data from Omnifocus and load it to GCS and BigQuery."""
+    now = datetime.now()
+    with tempfile.NamedTemporaryFile("w") as temp_file:
+        # Extract Omnifocus data to a file
+        _dump_omnifocus(temp_file)
+        # Load it to GCS
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(gcs_bucket)
+        filename = now.strftime(filename)
+        blob = bucket.blob(str(Path(gcs_bucket_prefix) / Path(filename)))
+        blob.upload_from_filename(temp_file.name)
 
 
 def jsonify(o):
