@@ -40,7 +40,7 @@ def dump(filename: str, directory: str) -> None:
 
 
 def _dump_omnifocus(output: IO[str]) -> None:
-    for task in load_tasks(OMNIFOCUS.defaultDocument()):
+    for task in load_tasks(OMNIFOCUS.default_document):
         task_dict = asdict(task)
         output.write(json.dumps(task_dict, default=jsonify))
         output.write("\n")
