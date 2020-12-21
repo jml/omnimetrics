@@ -5,6 +5,7 @@ Source: https://gist.github.com/glyph/e51d1809bf1edcb5e8f5dceb48f99ccb
 """
 
 import json
+import tempfile
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
@@ -14,7 +15,6 @@ import click
 from google.cloud import storage
 
 from omnimetrics._database import OMNIFOCUS, load_tasks
-from omnimetrics._gcs import iter_uploads
 
 
 @click.group()
@@ -47,29 +47,21 @@ def _dump_omnifocus(output: IO[str]) -> None:
 
 
 @omnimetrics.command()
-@click.option("--remove-after-upload/--no-remove-after-upload", default=False)
-@click.option("--dry-run/--no-dry-run", default=False)
-@click.option("--prefix", type=str, default="")
-@click.argument("local-directory", type=click.Path(file_okay=False, dir_okay=True, exists=True))
+@click.option("--gcs-bucket-prefix", type=str, default="")
+@click.option("--filename", default="omnifocus-%Y%m%d-%H%M%S.json", type=str)
 @click.argument("gcs-bucket", type=str)
-def upload(remove_after_upload: bool, prefix: str, local_directory: str, gcs_bucket: str, dry_run: bool):
-    local_dir = Path(local_directory)
-    uploads = iter_uploads(local_dir, Path(prefix))
-
-    if dry_run:
-        for upload in uploads:
-            print(upload)
-            if remove_after_upload:
-                print(f"rm -f {upload.local_file}")
-
-    else:
+def run_pipeline(gcs_bucket_prefix: str, filename: str, gcs_bucket: str) -> None:
+    """Extract data from Omnifocus and load it to GCS and BigQuery."""
+    now = datetime.now()
+    with tempfile.NamedTemporaryFile("w") as temp_file:
+        # Extract Omnifocus data to a file
+        _dump_omnifocus(temp_file)
+        # Load it to GCS
         storage_client = storage.Client()
         bucket = storage_client.bucket(gcs_bucket)
-
-        for upload in uploads:
-            upload.upload(bucket)
-            if remove_after_upload:
-                upload.local_file.unlink()
+        filename = now.strftime(filename)
+        blob = bucket.blob(str(Path(gcs_bucket_prefix) / Path(filename)))
+        blob.upload_from_filename(temp_file.name)
 
 
 def jsonify(o):
