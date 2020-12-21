@@ -3,8 +3,9 @@
 Command-line tool that shows exactly one OmniFocus task to do.
 """
 
-import attr
 import time
+from dataclasses import dataclass
+from typing import Any
 
 from Foundation import NSURL
 from ScriptingBridge import SBApplication
@@ -39,11 +40,11 @@ def tasksInView():  # pragma: no cover
     return filter(isTask, itemsInView())
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class Task:
     """A task from OmniFocus."""
 
-    task = attr.ib()
+    task: Any
 
     def defer(self, reason):
         return DeferredTask(self.task, reason)
@@ -52,12 +53,12 @@ class Task:
         return StartedTask(self.task, startTime)
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class StartedTask:
     """A task that has been started."""
 
-    task = attr.ib()
-    startTime = attr.ib()
+    task: Any
+    startTime: Any
 
     def complete(self, endTime):
         return CompletedTask(self.task, self.startTime, endTime)
@@ -67,21 +68,21 @@ class StartedTask:
         return Task(self.task)
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class CompletedTask:
     """A task that has been completed."""
 
-    task = attr.ib()
-    startTime = attr.ib()
-    endTime = attr.ib()
+    task: Any
+    startTime: Any
+    endTime: Any
 
 
-@attr.s(frozen=True)
+@dataclass(frozen=True)
 class DeferredTask:
     """A task that we've decided not to do."""
 
-    task = attr.ib()
-    reason = attr.ib()
+    task: Any
+    reason: Any
 
 
 def attempt(task):  # pragma: no cover
