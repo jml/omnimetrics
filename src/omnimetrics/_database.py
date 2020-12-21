@@ -14,14 +14,10 @@ from datetime import datetime
 from pprint import pprint
 from typing import Any, Callable, Iterable, Optional, TypeVar
 
-from Foundation import NSURL
-from ScriptingBridge import SBApplication
+from appscript import app, k
 
-OMNIFOCUS = SBApplication.applicationWithURL_(
-    NSURL.URLWithString_("file:///Applications/OmniFocus.app")
-)
 
-TASK_CLASS = OMNIFOCUS.classForScriptingClass_("task")
+OMNIFOCUS = app("OmniFocus")
 
 
 S = TypeVar("S")
@@ -35,17 +31,8 @@ def optional(f: Callable[[S], T], x: Optional[S]) -> Optional[T]:
     return f(x)
 
 
-def parse_date(date_str: str) -> datetime:
-    # TODO: This should convert __NSTaggedDate, not str.
-    return datetime.strptime(str(date_str), "%Y-%m-%d %H:%M:%S %z")
-
-
-def parse_bool(value: int) -> bool:
-    if value == 0:
-        return False
-    if value == 1:
-        return True
-    raise ValueError(f"Not a bool: {value}")
+def resolve_missing_value(value: T) -> Optional[T]:
+    return value if value != k.missing_value else None
 
 
 @dataclass(frozen=True)
@@ -161,39 +148,39 @@ class Task:
         properties = task.properties()
         try:
             return cls(
-                id=properties["id"],
-                name=properties["name"],
-                creation_date=parse_date(properties["creationDate"]),
-                modification_date=parse_date(properties["modificationDate"]),
-                due_date=optional(parse_date, properties["dueDate"]),
-                effective_due_date=optional(parse_date, properties["effectiveDueDate"]),
-                next_due_date=optional(parse_date, properties["nextDueDate"]),
-                defer_date=optional(parse_date, properties["deferDate"]),
-                effective_defer_date=optional(parse_date, properties["effectiveDeferDate"]),
-                next_defer_date=optional(parse_date, properties["nextDeferDate"]),
-                dropped_date=optional(parse_date, properties["droppedDate"]),
-                completion_date=optional(parse_date, properties["completionDate"]),
+                id=properties[k.id],
+                name=properties[k.name],
+                creation_date=properties[k.creation_date],
+                modification_date=properties[k.modification_date],
+                due_date=resolve_missing_value(properties[k.due_date]),
+                effective_due_date=resolve_missing_value(properties[k.effective_due_date]),
+                next_due_date=resolve_missing_value(properties[k.next_due_date]),
+                defer_date=resolve_missing_value(properties[k.defer_date]),
+                effective_defer_date=resolve_missing_value(properties[k.effective_defer_date]),
+                next_defer_date=resolve_missing_value(properties[k.next_defer_date]),
+                dropped_date=resolve_missing_value(properties[k.dropped_date]),
+                completion_date=resolve_missing_value(properties[k.completion_date]),
 
-                primary_tag=optional(TagReference.from_reference, properties["primaryTag"]),
-                parent_task=optional(TaskReference.from_reference, properties["parentTask"]),
-                estimated_minutes=properties["estimatedMinutes"],
-                containing_project=optional(ProjectReference.from_reference, properties["containingProject"]),
+                primary_tag=optional(TagReference.from_reference, resolve_missing_value(properties[k.primary_tag])),
+                parent_task=optional(TaskReference.from_reference, resolve_missing_value(properties[k.parent_task])),
+                estimated_minutes=resolve_missing_value(properties[k.estimated_minutes]),
+                containing_project=optional(ProjectReference.from_reference, resolve_missing_value(properties[k.containing_project])),
 
-                is_next=parse_bool(properties["next"]),
-                num_available_tasks=properties["numberOfAvailableTasks"],
-                num_completed_tasks=properties["numberOfCompletedTasks"],
-                num_tasks=properties["numberOfTasks"],
+                is_next=properties[k.next_],
+                num_available_tasks=properties[k.number_of_available_tasks],
+                num_completed_tasks=properties[k.number_of_completed_tasks],
+                num_tasks=properties[k.number_of_tasks],
 
-                is_in_inbox=parse_bool(properties["inInbox"]),
-                is_sequential=parse_bool(properties["sequential"]),
-                is_flagged=parse_bool(properties["flagged"]),
-                is_completed=parse_bool(properties["completed"]),
-                is_dropped=parse_bool(properties["dropped"]),
-                is_blocked=parse_bool(properties["blocked"]),
-                is_completed_by_children=parse_bool(properties["completedByChildren"]),
-                is_effectively_dropped=parse_bool(properties["effectivelyDropped"]),
-                is_effectively_completed=parse_bool(properties["effectivelyCompleted"]),
-                should_use_floating_timezone=parse_bool(properties["shouldUseFloatingTimeZone"]),
+                is_in_inbox=properties[k.in_inbox],
+                is_sequential=properties[k.sequential],
+                is_flagged=properties[k.flagged],
+                is_completed=properties[k.completed],
+                is_dropped=properties[k.dropped],
+                is_blocked=properties[k.blocked],
+                is_completed_by_children=properties[k.completed_by_children],
+                is_effectively_dropped=properties[k.effectively_dropped],
+                is_effectively_completed=properties[k.effectively_completed],
+                should_use_floating_timezone=properties[k.should_use_floating_time_zone],
             )
         except KeyError:
             pprint(properties)
@@ -211,5 +198,5 @@ class TaskReference:
 
 
 def load_tasks(omni_database: Any) -> Iterable[Task]:
-    for task in omni_database.flattenedTasks():
+    for task in omni_database.flattened_tasks():
         yield Task.from_omnifocus_task(task)
