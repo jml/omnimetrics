@@ -84,7 +84,7 @@ def _load_to_bigquery(gcs_bucket: str, gcs_path: str, destination_table: str) ->
                 bigquery.SchemaUpdateOption.ALLOW_FIELD_ADDITION,
                 bigquery.SchemaUpdateOption.ALLOW_FIELD_RELAXATION,
             ],
-            write_disposition=bigquery.WriteDisposition.WRITE_APPEND
+            write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
         )
     )
     job.result()
