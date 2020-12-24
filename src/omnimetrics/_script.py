@@ -52,7 +52,10 @@ def _dump_omnifocus(output: IO[str]) -> None:
 @click.argument("gcs-bucket", type=str)
 @click.argument("destination-table", type=str)
 def run_pipeline(gcs_bucket_prefix: str, filename: str, gcs_bucket: str, destination_table: str) -> None:
-    """Extract data from Omnifocus and load it to GCS and BigQuery."""
+    """Extract data from Omnifocus and load it to GCS and BigQuery.
+
+    The BigQuery destination table needs to exist, and needs to be partitioned.
+    """
     now = datetime.now()
     with tempfile.NamedTemporaryFile("w") as temp_file:
         # Extract Omnifocus data to a file
@@ -64,6 +67,7 @@ def run_pipeline(gcs_bucket_prefix: str, filename: str, gcs_bucket: str, destina
         gcs_path = str(Path(gcs_bucket_prefix) / Path(filename))
         blob = bucket.blob(gcs_path)
         blob.upload_from_filename(temp_file.name)
+    # TODO: Create the table if it doesn't exist.
     _load_to_bigquery(gcs_bucket, gcs_path, f"{destination_table}${now.strftime('%Y%m%d')}")
 
 
