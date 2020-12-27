@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: raw_tasks
+    description: Direct import of flattened tasks
+    columns:
+      - name: id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: name
+      - name: should_use_floating_timezone
+      - name: is_effectively_completed
+      - name: is_blocked
+      - name: is_dropped
+      - name: is_completed_by_children
+      - name: is_completed
+      - name: is_flagged
+      - name: estimated_minutes
+      - name: is_sequential
+      - name: num_available_tasks
+      - name: parent_task.name
+      - name: parent_task.id
+      - name: next_due_date
+      - name: effective_defer_date
+      - name: primary_tag.name
+      - name: completion_date
+      - name: creation_date
+      - name: is_in_inbox
+      - name: num_tasks
+      - name: containing_project.name
+      - name: next_defer_date
+      - name: num_completed_tasks
+      - name: defer_date
+      - name: effective_due_date
+      - name: is_effectively_dropped
+      - name: dropped_date
+      - name: modification_date
+      - name: is_next
+      - name: due_date
