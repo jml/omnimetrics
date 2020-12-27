@@ -32,7 +32,7 @@ setuptools.setup(
     license="Apache",
     description="Tools for exploring OmniFocus 3 data",
     zip_safe=False,
-    install_requires=["appscript", "click", "google-cloud-bigquery", "google-cloud-storage", "pyobjc"],
+    install_requires=["appscript", "click", "dbt", "google-cloud-bigquery", "google-cloud-storage", "pyobjc"],
     python_requires=">=3.8",
     classifiers=[
         "Operating System :: MacOS :: MacOS X",
