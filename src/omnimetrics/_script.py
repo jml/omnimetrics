@@ -84,6 +84,9 @@ def _load_to_bigquery(gcs_bucket: str, gcs_path: str, destination_table: str) ->
                 bigquery.SchemaUpdateOption.ALLOW_FIELD_ADDITION,
                 bigquery.SchemaUpdateOption.ALLOW_FIELD_RELAXATION,
             ],
+            time_partitioning=bigquery.TimePartitioning(
+                type_=bigquery.TimePartitioningType.DAY,
+            ),
             write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE
         )
     )
